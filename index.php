@@ -52,16 +52,34 @@ $server->register(
 
 function createUser($request){
     $urlInsert = "https://soapproyect-default-rtdb.firebaseio.com/crearUsuario.json";
-    $data = '{"apPaterno": "'.$request["apPaterno"].'", "apMaterno":"'.$request["apMaterno"].'", "nombre": "'.$request["nombre"].'", "correo": "'.$request["correo"].'", contrasenia: "'.$request["contrasenia"].'"}';
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $urlInsert);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: text/plain'));
-    
+
+    $dataAplicacion = '{
+            "apPaterno":"'.$request["apPaterno"].'",
+            "apMaterno":"'.$request["apMaterno"].'",
+            "nombre":"'.$request["nombre"].'",
+            "correo":"'.$request["correo"].'",
+            "contrasenia":"'.$request["contrasenia"].'"
+        }';
+        $chAplicacion = curl_init();
+        
+        curl_setopt($chAplicacion, CURLOPT_URL, $urlInsert);
+        curl_setopt($chAplicacion, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($chAplicacion, CURLOPT_POST, 1);
+        curl_setopt($chAplicacion, CURLOPT_POSTFIELDS, $dataAplicacion);
+        curl_setopt($chAplicacion, CURLOPT_HTTPHEADER, array('Content-Type: text/plain'));
+        
+        $responseAp = curl_exec($chAplicacion);
+        /* Codigo */
+        //curl_close($chAplicacion);
+        $resultado = json_decode($responseAp);
+        //return $resultado->name;
+        /* Codigo */
+        if (curl_errno($chAplicacion)) {
+            echo 'Error' . curl_errno($chAplicacion);
+        }
+
+
     return array(
-        'usuario' => "Los datos son ".$request["apPaterno"]." ".$request["apMaterno"]." ".$request["nombre"],
         "estatus" => "El usuario ha sido creado");
 }
 
@@ -149,18 +167,34 @@ $server->register(
 function update($request){
     $urlUpdate = "https://soapproyect-default-rtdb.firebaseio.com/actualizarUsuario.json";
 
-    $data = '{"apPaterno": "'.$request["apPaterno"].'", "apMaterno":"'.$request["apMaterno"].'", "nombre": "'.$request["nombre"].'", "correo": "'.$request["correo"].'", contrasenia: "'.$request["contrasenia"].'"}';
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $urlUpdate);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: text/plain'));
+    $dataAplicacion = '{
+        "apPaterno":"'.$request["apPaterno"].'",
+        "apMaterno":"'.$request["apMaterno"].'",
+        "nombre":"'.$request["nombre"].'",
+        "correo":"'.$request["correo"].'",
+        "contrasenia":"'.$request["contrasenia"].'"
+    }';
+    $chAplicacion = curl_init();
     
-    return array(
-        'usuario' => "Los datos son ".$request["apMaterno"],
-        "estatus" => "El usuario se actualizó"
-    );
+    curl_setopt($chAplicacion, CURLOPT_URL, $urlUpdate);
+    curl_setopt($chAplicacion, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($chAplicacion, CURLOPT_POST, 1);
+    curl_setopt($chAplicacion, CURLOPT_POSTFIELDS, $dataAplicacion);
+    curl_setopt($chAplicacion, CURLOPT_HTTPHEADER, array('Content-Type: text/plain'));
+    
+    $responseAp = curl_exec($chAplicacion);
+    /* Codigo */
+    //curl_close($chAplicacion);
+    $resultado = json_decode($responseAp);
+    //return $resultado->name;
+    /* Codigo */
+    if (curl_errno($chAplicacion)) {
+        echo 'Error' . curl_errno($chAplicacion);
+    }
+
+
+return array(
+    "estatus" => "El usuario ha sido creado");
 }
 
 
