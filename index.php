@@ -120,9 +120,26 @@ $server->register(
 );
 
 function login($request){
+
+    $url = "https://soapproyect-default-rtdb.firebaseio.com/crearUsuario.json";
+    $ch = curl_init();
+    curl_setopt($ch,CURLOPT_URL, $url);
+    curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
+    $response = curl_exec($ch);
+    curl_close($ch);
+    $data = json_decode($response,true);
+
+    $isLoged = "No encontró usuario";
+
+    // foreach ($data as $key){
+    //     if($data[$key]["id_aplicacion"] == $datos->aplicacion) {
+    //         $estadoKey = $key;
+    //         break;
+    //     }
+    // }
+    
     return array(
-        'usuario' => "Los datos son ".$request["apPaterno"]." ".$request["apMaterno"]." ".$request["nombre"],
-        "estatus" => "El usuario se logeo");
+        "estatus" => $isLoged);
 }
 
 // SE ACTUALIZA EL USUARIO
@@ -165,7 +182,7 @@ $server->register(
 );
 
 function update($request){
-    $urlUpdate = "https://soapproyect-default-rtdb.firebaseio.com/actualizarUsuario.json";
+    $urlUpdate = "https://soapproyect-default-rtdb.firebaseio.com/crearUsuario.json";
 
     $dataAplicacion = '{
         "apPaterno":"'.$request["apPaterno"].'",
