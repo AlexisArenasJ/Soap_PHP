@@ -1,0 +1,9 @@
+{
+    "description": "creacion de soap con php",
+    "type": "project",
+    "minimum-stability": "dev",
+    "require": {
+        "econea/nusoap": "0.10.x-dev",
+        "kreait/firebase-php": "^4.17.0"
+    }
+}
