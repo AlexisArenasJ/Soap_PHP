@@ -1,5 +1,4 @@
-<?php   
-
+<?php
 require __DIR__.'/vendor/autoload.php';
 require_once "vendor/econea/nusoap/src/nusoap.php";
 
@@ -11,13 +10,8 @@ $server = new soap_server();
 $server->configureWSDL("WSDL",$namespace);
 $server->wsdl->schemaTargetNamespace = $namespace;
 
-// SE CREA EL USUARIO
-$server->wsdl->addComplexType(
-    'crearUsuario',
-    'complexType',
-    'struct',
-    'all',
-    '',
+// Registro de usuario
+$server->wsdl->addComplexType('crearUsuario', 'complexType', 'struct', 'all', '',
     array(
         'apPaterno' => array('name' => 'apPaterno', 'type'=>'xsd:string'),
         'apMaterno' => array('name' => 'apMaterno', 'type'=>'xsd:string'),
@@ -27,32 +21,21 @@ $server->wsdl->addComplexType(
     )
 );
 
-$server->wsdl->addComplexType(
-    'response',
-    'complexType',
-    'struct',
-    'all',
-    '',
+$server->wsdl->addComplexType('response', 'complexType', 'struct', 'all', '',
     array(
         'usuario' => array('name'=>'usuario', 'type'=>'xsd:string'),
         'estatus' => array('name'=>'estatus', 'type'=>'xsd:string'),
     )
 );
 
-$server->register(
-    'createUser',
+$server->register('createUser',
     array('name' => 'tns:crearUsuario'),
     array('name' => 'tns:response'),
-    $namespace,
-    false,
-    'rpc',
-    'encoded',
-    'Recibe una usuario y regresa un boleano'
+    $namespace, false, 'rpc', 'encoded', 'Recibe una usuario y regresa un boleano'
 );
 
 function createUser($request){
     $urlInsert = "https://soapproyect-default-rtdb.firebaseio.com/crearUsuario.json";
-
     $dataAplicacion = '{
             "apPaterno":"'.$request["apPaterno"].'",
             "apMaterno":"'.$request["apMaterno"].'",
@@ -61,66 +44,48 @@ function createUser($request){
             "contrasenia":"'.$request["contrasenia"].'"
         }';
         $chAplicacion = curl_init();
-        
         curl_setopt($chAplicacion, CURLOPT_URL, $urlInsert);
         curl_setopt($chAplicacion, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($chAplicacion, CURLOPT_POST, 1);
         curl_setopt($chAplicacion, CURLOPT_POSTFIELDS, $dataAplicacion);
         curl_setopt($chAplicacion, CURLOPT_HTTPHEADER, array('Content-Type: text/plain'));
-        
         $responseAp = curl_exec($chAplicacion);
         /* Codigo */
         //curl_close($chAplicacion);
         $resultado = json_decode($responseAp);
+
         //return $resultado->name;
+
         /* Codigo */
         if (curl_errno($chAplicacion)) {
             echo 'Error' . curl_errno($chAplicacion);
         }
 
-
-    return array(
-        "estatus" => "El usuario ha sido creado");
+    return array("estatus" => "El usuario ha sido creado");
 }
 
-// SE LOGEA EL USUARIO
-$server->wsdl->addComplexType(
-    'getUsuario',
-    'complexType',
-    'struct',
-    'all',
-    '',
+// Inicio de sesión
+$server->wsdl->addComplexType('getUsuario', 'complexType', 'struct', 'all', '',
     array(
         'correo' => array('name' => 'correo', 'type'=>'xsd:string'),
         'contrasenia' => array('name' => 'contrasenia', 'type'=>'xsd:string')
     )
 );
 
-$server->wsdl->addComplexType(
-    'response',
-    'complexType',
-    'struct',
-    'all',
-    '',
+$server->wsdl->addComplexType('response', 'complexType', 'struct', 'all', '',
     array(
         'usuario' => array('name'=>'usuario', 'type'=>'xsd:string'),
         'estatus' => array('name'=>'estatus', 'type'=>'xsd:string')
     )
 );
 
-$server->register(
-    'login',
+$server->register('login',
     array('name' => 'tns:getUsuario'),
     array('name' => 'tns:response'),
-    $namespace,
-    false,
-    'rpc',
-    'encoded',
-    'Recibe una usuario y regresa un boleano'
+    $namespace, false, 'rpc', 'encoded', 'Recibe una usuario y regresa un boleano'
 );
 
 function login($request){
-
     $url = "https://soapproyect-default-rtdb.firebaseio.com/crearUsuario.json";
     $ch = curl_init();
     curl_setopt($ch,CURLOPT_URL, $url);
@@ -129,26 +94,17 @@ function login($request){
     curl_close($ch);
     $data = json_decode($response,true);
 
-    $isLoged = "No encontró usuario";
-
-    // foreach ($data as $key){
-    //     if($data[$key]["id_aplicacion"] == $datos->aplicacion) {
-    //         $estadoKey = $key;
-    //         break;
-    //     }
-    // }
+    foreach ($data as $value) {
+        if($value["correo"] == $request["correo"] && $value["contrasenia"] == $request["contrasenia"]){
+            return array(var_dump($value));
+        }
+    }
     
-    return array(
-        "estatus" => $isLoged);
+    // return array("estatus" => $data);
 }
 
-// SE ACTUALIZA EL USUARIO
-$server->wsdl->addComplexType(
-    'updateUsuario',
-    'complexType',
-    'struct',
-    'all',
-    '',
+// Actualizar usuario
+$server->wsdl->addComplexType('updateUsuario', 'complexType', 'struct', 'all', '',
     array(
         'apPaterno' => array('name' => 'apPaterno', 'type'=>'xsd:string'),
         'apMaterno' => array('name' => 'apMaterno', 'type'=>'xsd:string'),
@@ -158,32 +114,21 @@ $server->wsdl->addComplexType(
     )
 );
 
-$server->wsdl->addComplexType(
-    'response',
-    'complexType',
-    'struct',
-    'all',
-    '',
+$server->wsdl->addComplexType('response', 'complexType', 'struct', 'all', '',
     array(
         'usuario' => array('name'=>'usuario', 'type'=>'xsd:string'),
         'estatus' => array('name'=>'estatus', 'type'=>'xsd:string'),
     )
 );
 
-$server->register(
-    'update',
+$server->register('update',
     array('name' => 'tns:updateUsuario'),
     array('name' => 'tns:response'),
-    $namespace,
-    false,
-    'rpc',
-    'encoded',
-    'Recibe una usuario y regresa un boleano'
+    $namespace, false, 'rpc', 'encoded', 'Recibe una usuario y regresa un boleano'
 );
 
 function update($request){
     $urlUpdate = "https://soapproyect-default-rtdb.firebaseio.com/crearUsuario.json";
-
     $dataAplicacion = '{
         "apPaterno":"'.$request["apPaterno"].'",
         "apMaterno":"'.$request["apMaterno"].'",
@@ -192,7 +137,6 @@ function update($request){
         "contrasenia":"'.$request["contrasenia"].'"
     }';
     $chAplicacion = curl_init();
-    
     curl_setopt($chAplicacion, CURLOPT_URL, $urlUpdate);
     curl_setopt($chAplicacion, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($chAplicacion, CURLOPT_POST, 1);
@@ -200,22 +144,24 @@ function update($request){
     curl_setopt($chAplicacion, CURLOPT_HTTPHEADER, array('Content-Type: text/plain'));
     
     $responseAp = curl_exec($chAplicacion);
+
     /* Codigo */
     //curl_close($chAplicacion);
     $resultado = json_decode($responseAp);
+
     //return $resultado->name;
+
     /* Codigo */
     if (curl_errno($chAplicacion)) {
         echo 'Error' . curl_errno($chAplicacion);
     }
 
-
-return array(
-    "estatus" => "El usuario ha sido creado");
+    return array("estatus" => "El usuario ha sido creado");
 }
 
-
-// SE MANDA EL XML CON LAS OPCIONES
+// Se envía XML con las opciones
 $POST_DATA = file_get_contents("php://input");
+
 $server->service($POST_DATA);
+
 exit();
