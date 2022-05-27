@@ -1,2 +1,6 @@
-# Soap_PHP
-Servicio Soap con PHP
+
+## Servicio SOAP en PHP
+Creado por:
+- Alejandro
+- Alexis
+- Axel
